@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @ConfigurationProperties(prefix = "db-config")
-public class Config {
+public class JdbcConfig {
 
     private String url;
     private String dbUser;
