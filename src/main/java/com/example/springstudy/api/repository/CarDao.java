@@ -3,6 +3,7 @@ package com.example.springstudy.api.repository;
 import com.example.springstudy.api.model.Car;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@Profile("postgres")
 public class CarDao implements CarRepository{
 
     private JdbcTemplate jdbcTemplate;
