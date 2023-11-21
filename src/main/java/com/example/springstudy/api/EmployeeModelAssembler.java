@@ -1,7 +1,7 @@
 package com.example.springstudy.api;
 
 import com.example.springstudy.api.model.Employee;
-import com.example.springstudy.api.restController.EmployeeController;
+import com.example.springstudy.api.controller.EmployeeController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -16,6 +16,6 @@ public class EmployeeModelAssembler implements RepresentationModelAssembler<Empl
     public EntityModel<Employee> toModel(Employee employee) {
         return EntityModel.of(employee,
                 linkTo(methodOn(EmployeeController.class).getEmployeeById(employee.getId())).withSelfRel(),
-                linkTo(methodOn(EmployeeController.class).getAll()).withRel("employees"));
+                linkTo(methodOn(EmployeeController.class).getAll(employee.getFirstName())).withRel("employees"));
     }
 }

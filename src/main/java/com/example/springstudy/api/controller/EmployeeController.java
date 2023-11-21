@@ -1,9 +1,10 @@
-package com.example.springstudy.api.restController;
+package com.example.springstudy.api.controller;
 
 import com.example.springstudy.api.EmployeeModelAssembler;
 import com.example.springstudy.api.EmployeeNotFoundException;
 import com.example.springstudy.api.model.Employee;
 import com.example.springstudy.api.repository.EmployeeRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -33,11 +35,26 @@ public class EmployeeController {
     }
 
     @GetMapping("/api/employees")
-    public CollectionModel<EntityModel<Employee>> getAll() {
+    public CollectionModel<EntityModel<Employee>> getAll(@RequestParam(required = false) String firstName) {
         List<EntityModel<Employee>> employees = employeeRepository.findAll().stream()
+                // should be moved to service / repository
+                .filter(employee -> {
+                    if (firstName != null)
+                        return employee.getFirstName().contains(firstName);
+                    return true;
+                })
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).getAll()).withSelfRel());
+        return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).getAll(firstName)).withSelfRel());
+    }
+
+    @GetMapping("/api/employees2")
+    public CollectionModel<EntityModel<Employee>> getAllSearch(Pageable pageable) {
+
+        List<EntityModel<Employee>> employees = employeeRepository.findAll(pageable).stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).getAllSearch(pageable)).withSelfRel());
     }
 
     @GetMapping("/api/employees/{id}")
