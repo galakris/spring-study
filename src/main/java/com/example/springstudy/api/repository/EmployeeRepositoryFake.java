@@ -1,11 +1,11 @@
 package com.example.springstudy.api.repository;
 
 import com.example.springstudy.api.model.Employee;
+
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +31,13 @@ public class EmployeeRepositoryFake implements EmployeeRepository{
     @Override
     public List<Employee> findAll(Pageable pageable) {
         // TODO: Spring Data -
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public List<Employee> findAll(Specification<Employee> where) {
         // TODO Spring Data - JpaSpecificationExecutor - https://www.javaguides.net/2023/08/spring-data-jpa-specification-example.html
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

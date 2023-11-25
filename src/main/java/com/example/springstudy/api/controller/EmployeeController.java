@@ -2,6 +2,7 @@ package com.example.springstudy.api.controller;
 
 import com.example.springstudy.api.EmployeeModelAssembler;
 import com.example.springstudy.api.EmployeeNotFoundException;
+import com.example.springstudy.api.aspect.GetEmployeeAspect;
 import com.example.springstudy.api.model.Employee;
 import com.example.springstudy.api.repository.EmployeeRepository;
 import org.springframework.data.domain.Pageable;
@@ -58,6 +59,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/api/employees/{id}")
+    @GetEmployeeAspect
     public EntityModel<Employee> getEmployeeById(@PathVariable Long id) {
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
         return assembler.toModel(employee);
