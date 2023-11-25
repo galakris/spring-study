@@ -1,13 +1,15 @@
 package com.example.springstudy.api.controller;
 
 import com.example.springstudy.api.EmployeeModelAssembler;
-import com.example.springstudy.api.EmployeeNotFoundException;
+import com.example.springstudy.api.exception.EmployeeAlreadyExistException;
+import com.example.springstudy.api.exception.EmployeeNotFoundException;
 import com.example.springstudy.api.aspect.GetEmployeeAspect;
 import com.example.springstudy.api.model.Employee;
 import com.example.springstudy.api.repository.EmployeeRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,6 +71,9 @@ public class EmployeeController {
 
     @PostMapping("/api/employees")
     public Employee saveEmployee(@RequestBody Employee employee) {
+        employeeRepository.findById(employee.getId()).ifPresent(emp -> {
+            throw new EmployeeAlreadyExistException(emp.getId());
+        });
         return employeeRepository.save(employee);
     }
     @PutMapping("/api/employees/{id}")
@@ -89,6 +95,8 @@ public class EmployeeController {
 
     @DeleteMapping("/api/employees/{id}")
     public void deleteEmployee(@PathVariable Long id) {
+        employeeRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find employee with id: " + id));
         employeeRepository.deleteById(id);
     }
 

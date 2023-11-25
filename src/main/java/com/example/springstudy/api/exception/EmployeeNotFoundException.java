@@ -1,4 +1,4 @@
-package com.example.springstudy.api;
+package com.example.springstudy.api.exception;
 
 public class EmployeeNotFoundException extends RuntimeException {
     public EmployeeNotFoundException(Long id) {
