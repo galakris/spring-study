@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,35 +72,40 @@ public class EmployeeController {
 
 
     @PostMapping("/api/employees")
-    public Employee saveEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<EntityModel<Employee>> saveEmployee(@RequestBody Employee employee) {
         employeeRepository.findById(employee.getId()).ifPresent(emp -> {
+            // maybe link should be added to error message
             throw new EmployeeAlreadyExistException(emp.getId());
         });
-        return employeeRepository.save(employee);
+        EntityModel<Employee> employeeEntityModel = assembler.toModel(employeeRepository.save(employee));
+        return ResponseEntity.created(employeeEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(employeeEntityModel);
     }
+
     @PutMapping("/api/employees/{id}")
-    public Employee putEmployee(@PathVariable Long id, @RequestBody Employee updatedEmployee){
+    public ResponseEntity<?> putEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         // should be moved to service
-        return employeeRepository.findById(id).
-                map(employee -> {
-                    employee.setFirstName(updatedEmployee.getFirstName());
-                    employee.setLastName(updatedEmployee.getLastName());
-                    employee.setBirthday(updatedEmployee.getBirthday());
-                    employee.setCompany(updatedEmployee.getCompany());
-                    employee.setSalary(updatedEmployee.getSalary());
+        Employee updatedEmployee = employeeRepository.findById(id).
+                map(emp -> {
+                    emp.setFirstName(employee.getFirstName());
+                    emp.setLastName(employee.getLastName());
+                    emp.setBirthday(employee.getBirthday());
+                    emp.setCompany(employee.getCompany());
+                    emp.setSalary(employee.getSalary());
+                    return employeeRepository.save(emp);
+                }).orElseGet(() -> {
+                    employee.setId(id);
                     return employeeRepository.save(employee);
-                }).orElseGet(() ->{
-                    updatedEmployee.setId(id);
-                    return employeeRepository.save(updatedEmployee);
                 });
+        EntityModel<Employee> employeeEntityModel = assembler.toModel(updatedEmployee);
+        return ResponseEntity.ok(employeeEntityModel);
     }
 
     @DeleteMapping("/api/employees/{id}")
-    public void deleteEmployee(@PathVariable Long id) {
+    public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
         employeeRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find employee with id: " + id));
         employeeRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
-
-
 }
