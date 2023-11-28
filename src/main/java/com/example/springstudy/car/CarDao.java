@@ -1,6 +1,5 @@
-package com.example.springstudy.api.repository;
+package com.example.springstudy.car;
 
-import com.example.springstudy.api.model.Car;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
@@ -21,11 +20,10 @@ public class CarDao implements CarRepository{
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
     @EventListener(ApplicationReadyEvent.class)
     public void dbInit() {
-//        String createCarTableSql = "CREATE TABLE CAR(CAR_ID INTEGER, BRAND VARCHAR(255), MODEL VARCHAR(255), COLOR VARCHAR(255) );";
-//        jdbcTemplate.update(createCarTableSql);
+        String createCarTableSql = "CREATE TABLE CAR(CAR_ID INTEGER, BRAND VARCHAR(255), MODEL VARCHAR(255), COLOR VARCHAR(255) );";
+        jdbcTemplate.update(createCarTableSql);
         cleanUp();
         save(new Car(1, "Fiat", "126p", "red"));
         save(new Car(2, "Fiat", "126p", "blue"));
@@ -52,5 +50,4 @@ public class CarDao implements CarRepository{
                 new Object[]{brand},
                 (rs, row) -> new Car(rs.getLong("CAR_ID"), rs.getString("BRAND"), rs.getString("MODEL"), rs.getString("COLOR")));
     }
-
 }

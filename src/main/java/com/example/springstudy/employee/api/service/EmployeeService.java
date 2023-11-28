@@ -1,8 +1,8 @@
-package com.example.springstudy.api.service;
+package com.example.springstudy.employee.api.service;
 
-import com.example.springstudy.api.model.Employee;
-import com.example.springstudy.api.repository.EmployeeRepository;
-import com.example.springstudy.api.service.spec.EmployeeSpecifications;
+import com.example.springstudy.employee.api.model.Employee;
+import com.example.springstudy.employee.api.repository.EmployeeRepository;
+import com.example.springstudy.employee.api.service.spec.EmployeeSpecifications;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 

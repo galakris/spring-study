@@ -1,11 +1,11 @@
-package com.example.springstudy.api.controller;
+package com.example.springstudy.employee.api.controller;
 
-import com.example.springstudy.api.EmployeeModelAssembler;
-import com.example.springstudy.api.exception.EmployeeAlreadyExistException;
-import com.example.springstudy.api.exception.EmployeeNotFoundException;
-import com.example.springstudy.api.aspect.GetEmployeeAspect;
-import com.example.springstudy.api.model.Employee;
-import com.example.springstudy.api.repository.EmployeeRepository;
+import com.example.springstudy.employee.api.EmployeeModelAssembler;
+import com.example.springstudy.employee.api.exception.EmployeeAlreadyExistException;
+import com.example.springstudy.employee.api.exception.EmployeeNotFoundException;
+import com.example.springstudy.employee.api.aspect.GetEmployeeAspect;
+import com.example.springstudy.employee.api.model.Employee;
+import com.example.springstudy.employee.api.repository.EmployeeRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@RestController
+@RestController("api/v1/employees")
 public class EmployeeController {
 
     EmployeeRepository employeeRepository;
@@ -40,7 +40,7 @@ public class EmployeeController {
         this.assembler = employeeModelAssembler;
     }
 
-    @GetMapping("/api/employees")
+    @GetMapping
     public CollectionModel<EntityModel<Employee>> getAll(@RequestParam(required = false) String firstName) {
         List<EntityModel<Employee>> employees = employeeRepository.findAll().stream()
                 // should be moved to service / repository
@@ -54,7 +54,8 @@ public class EmployeeController {
         return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).getAll(firstName)).withSelfRel());
     }
 
-    @GetMapping("/api/employees2")
+    // TODO: implement pagination
+    @GetMapping("/pageable")
     public CollectionModel<EntityModel<Employee>> getAllSearch(Pageable pageable) {
 
         List<EntityModel<Employee>> employees = employeeRepository.findAll(pageable).stream()
@@ -63,7 +64,7 @@ public class EmployeeController {
         return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).getAllSearch(pageable)).withSelfRel());
     }
 
-    @GetMapping("/api/employees/{id}")
+    @GetMapping("{id}")
     @GetEmployeeAspect
     public EntityModel<Employee> getEmployeeById(@PathVariable Long id) {
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
@@ -71,7 +72,7 @@ public class EmployeeController {
     }
 
 
-    @PostMapping("/api/employees")
+    @PostMapping
     public ResponseEntity<EntityModel<Employee>> saveEmployee(@RequestBody Employee employee) {
         employeeRepository.findById(employee.getId()).ifPresent(emp -> {
             // maybe link should be added to error message
@@ -82,7 +83,7 @@ public class EmployeeController {
                 .body(employeeEntityModel);
     }
 
-    @PutMapping("/api/employees/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<?> putEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         // should be moved to service
         Employee updatedEmployee = employeeRepository.findById(id).
@@ -101,7 +102,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeEntityModel);
     }
 
-    @DeleteMapping("/api/employees/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
         employeeRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find employee with id: " + id));

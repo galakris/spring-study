@@ -1,4 +1,4 @@
-package com.example.springstudy.api.exception;
+package com.example.springstudy.employee.api.exception;
 
 public class ErrorMessage {
 

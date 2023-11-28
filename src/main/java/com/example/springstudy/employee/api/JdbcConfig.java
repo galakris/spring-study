@@ -1,4 +1,4 @@
-package com.example.springstudy.api;
+package com.example.springstudy.employee.api;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;

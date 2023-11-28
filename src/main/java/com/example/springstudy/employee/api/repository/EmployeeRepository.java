@@ -1,7 +1,7 @@
-package com.example.springstudy.api.repository;
+package com.example.springstudy.employee.api.repository;
 
 
-import com.example.springstudy.api.model.Employee;
+import com.example.springstudy.employee.api.model.Employee;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 

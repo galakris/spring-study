@@ -1,10 +1,10 @@
 package com.example.springstudy;
 
 
-import com.example.springstudy.api.model.Company;
-import com.example.springstudy.api.model.Country;
-import com.example.springstudy.api.model.Employee;
-import com.example.springstudy.api.repository.EmployeeRepository;
+import com.example.springstudy.employee.api.model.Company;
+import com.example.springstudy.employee.api.model.Country;
+import com.example.springstudy.employee.api.model.Employee;
+import com.example.springstudy.employee.api.repository.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

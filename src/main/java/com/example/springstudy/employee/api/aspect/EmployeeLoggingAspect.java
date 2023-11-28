@@ -1,6 +1,6 @@
-package com.example.springstudy.api.aspect;
+package com.example.springstudy.employee.api.aspect;
 
-import com.example.springstudy.api.model.Employee;
+import com.example.springstudy.employee.api.model.Employee;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmployeeLoggingAspect {
 
-    @Pointcut("execution(* com.example.springstudy.api.controller.EmployeeController.getEmployeeById(Long))")
+    @Pointcut("execution(* com.example.springstudy.employee.api.controller.EmployeeController.getEmployeeById(Long))")
     public void logPointcut() {}
 
     @Around("@annotation(GetEmployeeAspect)")

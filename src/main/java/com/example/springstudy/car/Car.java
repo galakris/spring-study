@@ -1,4 +1,4 @@
-package com.example.springstudy.api.model;
+package com.example.springstudy.car;
 
 
 public class Car {

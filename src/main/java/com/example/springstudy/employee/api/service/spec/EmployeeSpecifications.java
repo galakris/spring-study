@@ -1,6 +1,6 @@
-package com.example.springstudy.api.service.spec;
+package com.example.springstudy.employee.api.service.spec;
 
-import com.example.springstudy.api.model.Employee;
+import com.example.springstudy.employee.api.model.Employee;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;

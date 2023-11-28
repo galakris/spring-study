@@ -1,4 +1,4 @@
-package com.example.springstudy.api.aspect;
+package com.example.springstudy.employee.api.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

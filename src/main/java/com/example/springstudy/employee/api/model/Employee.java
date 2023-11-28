@@ -1,4 +1,4 @@
-package com.example.springstudy.api.model;
+package com.example.springstudy.employee.api.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
