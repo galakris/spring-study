@@ -5,7 +5,6 @@ import java.util.List;
 public class Company {
 
     private Long id;
-
     private String name;
     private Country country;
     private List<Employee> employees;
@@ -28,6 +27,14 @@ public class Company {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Country getCountry() {
         return country;
     }
@@ -42,5 +49,15 @@ public class Company {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", country=" + country +
+                ", employees=" + employees +
+                '}';
     }
 }

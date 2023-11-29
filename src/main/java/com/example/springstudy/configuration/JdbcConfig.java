@@ -1,4 +1,4 @@
-package com.example.springstudy.employee.api;
+package com.example.springstudy.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -15,15 +15,15 @@ public class JdbcConfig {
     private String url;
     private String dbUser;
     private String password;
+    private String driver;
 
     @Bean
     public DataSource getDataSource() {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        return dataSourceBuilder
+        return DataSourceBuilder.create()
                 .url(url)
                 .username(dbUser)
                 .password(password)
-                .driverClassName("org.postgresql.Driver")
+                .driverClassName(driver)
                 .build();
     }
 
@@ -42,5 +42,9 @@ public class JdbcConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
     }
 }
