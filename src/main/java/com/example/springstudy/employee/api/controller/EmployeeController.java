@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@RestController("api/v1/employees")
+@RestController
+@RequestMapping(path = "api/v1/employees")
 public class EmployeeController {
 
     EmployeeRepository employeeRepository;
