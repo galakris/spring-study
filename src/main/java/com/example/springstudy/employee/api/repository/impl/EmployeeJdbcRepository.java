@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,13 +27,16 @@ public class EmployeeJdbcRepository implements EmployeeRepository {
 
     JdbcTemplate jdbcTemplate;
 
-    CompanyRepository companyRepository;
-
     @Autowired
-    public EmployeeJdbcRepository(JdbcTemplate jdbcTemplate, CompanyRepository companyRepository) {
+    public EmployeeJdbcRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.companyRepository = companyRepository;
     }
+
+    // if JdbcTemplate Bean not created in configuration file
+//    @Autowired
+//    public EmployeeJdbcRepository(DataSource dataSource) {
+//        this.jdbcTemplate = new JdbcTemplate(dataSource);
+//    }
 
     @Override
     public Employee save(Employee employee) {
