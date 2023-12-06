@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: employee_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_pass
+    ports:
+      - "21000:5432"
+    restart: always
