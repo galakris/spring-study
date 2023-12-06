@@ -32,9 +32,9 @@ public class InitDatabase {
             String dropEmployeeTableSql = "DROP TABLE IF EXISTS EMPLOYEE;";
             jdbcTemplate.update(dropEmployeeTableSql);
 
-            String createCompanyTableSql = "CREATE TABLE COMPANY(COMPANY_ID INTEGER, NAME VARCHAR(255), COUNTRY VARCHAR(255));";
+            String createCompanyTableSql = "CREATE TABLE COMPANY(COMP_ID INTEGER, COMP_NAME VARCHAR(255), COMP_COUNTRY VARCHAR(255));";
             jdbcTemplate.update(createCompanyTableSql);
-            String createEmployeeTableSql = "CREATE TABLE EMPLOYEE(EMPLOYEE_ID INTEGER, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), BIRTH_DATE TIMESTAMP, SALARY DECIMAL, COMPANY_ID INTEGER);";
+            String createEmployeeTableSql = "CREATE TABLE EMPLOYEE(EMP_ID INTEGER, EMP_FIRST_NAME VARCHAR(255), EMP_LAST_NAME VARCHAR(255), EMP_BIRTH_DATE TIMESTAMP, EMP_SALARY DECIMAL, COMP_ID INTEGER);";
             jdbcTemplate.update(createEmployeeTableSql);
 
             String cleanCompanyTeble = "DELETE FROM COMPANY;";

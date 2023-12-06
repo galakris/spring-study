@@ -12,10 +12,11 @@ public interface EmployeeRepository {
 
     Employee save(Employee employee);
     List<Employee> findAll();
+
+    List<Employee> findByFirstName(String firstName);
     List<Employee> findAll(Pageable pageable);
     List<Employee> findAll(Specification<Employee> where);
     Optional<Employee> findById(Long id);
-    void deleteById(Long id);
-    void deleteAll();
+    int deleteById(Long id);
 
 }

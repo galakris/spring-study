@@ -1,7 +1,8 @@
-package com.example.springstudy.employee.api.repository;
+package com.example.springstudy.employee.api.repository.impl;
 
 import com.example.springstudy.employee.api.model.Employee;
 
+import com.example.springstudy.employee.api.repository.EmployeeRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,10 +11,11 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Profile("noDB")
 @Repository
-public class EmployeeRepositoryFake implements EmployeeRepository{
+public class EmployeeRepositoryFake implements EmployeeRepository {
 
     List<Employee> employees = new ArrayList<>();
 
@@ -26,6 +28,17 @@ public class EmployeeRepositoryFake implements EmployeeRepository{
     @Override
     public List<Employee> findAll() {
         return employees;
+    }
+
+    @Override
+    public List<Employee> findByFirstName(String firstName) {
+        if(firstName != null && !firstName.isEmpty()) {
+            return employees
+                    .stream()
+                    .filter(employee -> firstName.equals(employee.getFirstName()))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -48,12 +61,7 @@ public class EmployeeRepositoryFake implements EmployeeRepository{
     }
 
     @Override
-    public void deleteById(Long id) {
-        employees.removeIf(employee -> employee.getId().equals(id));
-    }
-
-    @Override
-    public void deleteAll() {
-        employees.clear();
+    public int deleteById(Long id) {
+        return employees.removeIf(employee -> employee.getId().equals(id)) ? 1 : 0;
     }
 }

@@ -19,6 +19,13 @@ public class Company {
         this.employees = employees;
     }
 
+    public Company(Long id, String name, Country country, List<Employee> employees) {
+        this.id = id;
+        this.name = name;
+        this.country = country;
+        this.employees = employees;
+    }
+
     public Long getId() {
         return id;
     }
