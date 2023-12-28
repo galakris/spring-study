@@ -1,7 +1,6 @@
 package com.example.springstudy.employee.api.repository.impl;
 
 import com.example.springstudy.employee.api.model.Employee;
-import com.example.springstudy.employee.api.repository.CompanyRepository;
 import com.example.springstudy.employee.api.repository.EmployeeRepository;
 import com.example.springstudy.employee.api.repository.impl.mapper.EmployeeRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +18,12 @@ import java.util.Optional;
 @Repository
 public class EmployeeJdbcRepository implements EmployeeRepository {
 
-    private static final String INSERT_EMP = "INSERT INTO EMPLOYEE VALUES (?, ?, ?, ?, ?, ?);";
+    private static final String INSERT_EMP = "INSERT INTO EMPLOYEE (EMP_ID, EMP_FIRST_NAME, EMP_LAST_NAME, EMP_BIRTH_DATE, EMP_SALARY, COMP_ID) VALUES (?, ?, ?, ?, ?, ?);";
     private static final String SELECT_EMP = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.COMP_ID LIMIT 100";
     private static final String SELECT_EMP_BY_ID = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.COMP_ID WHERE E.EMP_ID = ?";
     private static final String SELECT_EMP_BY_FIRST_NAME = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.COMP_ID WHERE E.EMP_FIRST_NAME = ?";
     private static final String DELETE_EMP = "DELETE FROM EMPLOYEE WHERE EMP_ID = ?";
+    private static final String SELECT_EMP_SEQUENCE_NEXTVAL = "SELECT nextval('employee_emp_id_seq')";
 
     JdbcTemplate jdbcTemplate;
 
@@ -40,7 +40,10 @@ public class EmployeeJdbcRepository implements EmployeeRepository {
 
     @Override
     public Employee save(Employee employee) {
-        jdbcTemplate.update(INSERT_EMP,
+        if (employee.getId() == null || employee.getId() == 0L)
+            employee.setId(getNextId());
+
+        int update = jdbcTemplate.update(INSERT_EMP,
                 employee.getId(),
                 employee.getFirstName(),
                 employee.getLastName(),
@@ -78,6 +81,17 @@ public class EmployeeJdbcRepository implements EmployeeRepository {
     @Override
     public int deleteById(Long id) {
         return jdbcTemplate.update(DELETE_EMP,  id);
+    }
+
+    public Long getNextId() {
+        return jdbcTemplate.query(SELECT_EMP_SEQUENCE_NEXTVAL,
+                rs -> {
+                    if (rs.next()) {
+                        return rs.getLong(1);
+                    } else {
+                        throw new SQLException("Unable to retrieve value from sequence employee_emp_id_seq.");
+                    }
+                });
     }
 }
  	

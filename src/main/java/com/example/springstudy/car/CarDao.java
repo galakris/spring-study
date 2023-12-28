@@ -23,18 +23,18 @@ public class CarDao implements CarRepository{
     @EventListener(ApplicationReadyEvent.class)
     public void dbInit() {
 
-        String dropCarTableSql = "DROP TABLE IF EXISTS CAR;";
-        jdbcTemplate.update(dropCarTableSql);
-        String createCarTableSql = "CREATE TABLE CAR(CAR_ID INTEGER, BRAND VARCHAR(255), MODEL VARCHAR(255), COLOR VARCHAR(255) );";
-        jdbcTemplate.update(createCarTableSql);
-        cleanUp();
-        save(new Car(1, "Fiat", "126p", "red"));
-        save(new Car(2, "Fiat", "126p", "blue"));
-        save(new Car(3, "Audi", "a3", "black"));
-        save(new Car(4, "Audi", "a4", "silver"));
+//        String dropCarTableSql = "DROP TABLE IF EXISTS CAR;";
+//        jdbcTemplate.update(dropCarTableSql);
+//        String createCarTableSql = "CREATE TABLE CAR(CAR_ID INTEGER, BRAND VARCHAR(255), MODEL VARCHAR(255), COLOR VARCHAR(255) );";
+//        jdbcTemplate.update(createCarTableSql);
+//        cleanUp();
+//        save(new Car(1, "Fiat", "126p", "red"));
+//        save(new Car(2, "Fiat", "126p", "blue"));
+//        save(new Car(3, "Audi", "a3", "black"));
+//        save(new Car(4, "Audi", "a4", "silver"));
 
-        System.out.println("\nCars with Brand equal to Audi:");
-        getCarsByBrand("Audi").forEach(System.out::println);
+//        System.out.println("\nCars with Brand equal to Audi:");
+//        getCarsByBrand("Audi").forEach(System.out::println);
     }
 
     public void save(Car car) {
