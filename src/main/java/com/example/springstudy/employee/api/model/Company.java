@@ -1,12 +1,23 @@
 package com.example.springstudy.employee.api.model;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
+import java.util.List;
+import java.util.Objects;
+
+@Entity
 public class Company {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Enumerated(EnumType.STRING)
     private Country country;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "company")
     private List<Employee> employees;
 
     public Company() {
@@ -56,6 +67,19 @@ public class Company {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Company company = (Company) o;
+        return Objects.equals(id, company.id) && Objects.equals(name, company.name) && country == company.country && Objects.equals(employees, company.employees);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, country, employees);
     }
 
     @Override

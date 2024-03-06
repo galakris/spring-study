@@ -18,12 +18,12 @@ import java.util.Optional;
 @Repository
 public class EmployeeJdbcRepository implements EmployeeRepository {
 
-    private static final String INSERT_EMP = "INSERT INTO EMPLOYEE (EMP_ID, EMP_FIRST_NAME, EMP_LAST_NAME, EMP_BIRTH_DATE, EMP_SALARY, COMP_ID) VALUES (?, ?, ?, ?, ?, ?);";
-    private static final String SELECT_EMP = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.COMP_ID LIMIT 100";
-    private static final String SELECT_EMP_BY_ID = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.COMP_ID WHERE E.EMP_ID = ?";
-    private static final String SELECT_EMP_BY_FIRST_NAME = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.COMP_ID WHERE E.EMP_FIRST_NAME = ?";
-    private static final String DELETE_EMP = "DELETE FROM EMPLOYEE WHERE EMP_ID = ?";
-    private static final String SELECT_EMP_SEQUENCE_NEXTVAL = "SELECT nextval('employee_emp_id_seq')";
+    private static final String INSERT_EMP = "INSERT INTO EMPLOYEE (ID, FIRST_NAME, LAST_NAME, BIRTH_DATE, SALARY, COMP_ID) VALUES (?, ?, ?, ?, ?, ?);";
+    private static final String SELECT_EMP = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.ID LIMIT 100";
+    private static final String SELECT_EMP_BY_ID = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.ID WHERE E.ID = ?";
+    private static final String SELECT_EMP_BY_FIRST_NAME = "SELECT * FROM EMPLOYEE E JOIN COMPANY C ON E.COMP_ID = C.ID WHERE E.FIRST_NAME = ?";
+    private static final String DELETE_EMP = "DELETE FROM EMPLOYEE WHERE ID = ?";
+    private static final String SELECT_EMP_SEQUENCE_NEXTVAL = "SELECT nextval('employee_id_seq')";
 
     JdbcTemplate jdbcTemplate;
 
@@ -47,7 +47,7 @@ public class EmployeeJdbcRepository implements EmployeeRepository {
                 employee.getId(),
                 employee.getFirstName(),
                 employee.getLastName(),
-                employee.getBirthday(),
+                employee.getBirthDate(),
                 employee.getSalary(),
                 employee.getCompany().getId());
         return employee;
@@ -89,7 +89,7 @@ public class EmployeeJdbcRepository implements EmployeeRepository {
                     if (rs.next()) {
                         return rs.getLong(1);
                     } else {
-                        throw new SQLException("Unable to retrieve value from sequence employee_emp_id_seq.");
+                        throw new SQLException("Unable to retrieve value from sequence employee_id_seq.");
                     }
                 });
     }

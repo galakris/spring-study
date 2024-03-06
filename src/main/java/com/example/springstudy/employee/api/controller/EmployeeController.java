@@ -1,12 +1,16 @@
 package com.example.springstudy.employee.api.controller;
 
 import com.example.springstudy.employee.api.EmployeeModelAssembler;
+import com.example.springstudy.employee.api.controller.dto.EmployeeDto;
 import com.example.springstudy.employee.api.exception.EmployeeAlreadyExistException;
 import com.example.springstudy.employee.api.exception.EmployeeNotFoundException;
 import com.example.springstudy.employee.api.aspect.GetEmployeeAspect;
 import com.example.springstudy.employee.api.model.Employee;
-import com.example.springstudy.employee.api.repository.EmployeeRepository;
+import com.example.springstudy.employee.api.repository.impl.EmployeeJpaRepository;
+import com.example.springstudy.employee.api.service.EmployeeService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,18 +30,24 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping(path = "api/v1/employees")
 public class EmployeeController {
 
-    EmployeeRepository employeeRepository;
+    EmployeeJpaRepository employeeJpaRepository;
+
+    EmployeeService employeeService;
 
     EmployeeModelAssembler assembler;
 
-    public EmployeeController(EmployeeRepository employeeRepository, EmployeeModelAssembler employeeModelAssembler) {
-        this.employeeRepository = employeeRepository;
-        this.assembler = employeeModelAssembler;
+    ModelMapper modelMapper;
+
+    public EmployeeController(EmployeeJpaRepository employeeJpaRepository, EmployeeService employeeService, EmployeeModelAssembler assembler, ModelMapper modelMapper) {
+        this.employeeJpaRepository = employeeJpaRepository;
+        this.employeeService = employeeService;
+        this.assembler = assembler;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
     public CollectionModel<EntityModel<Employee>> getAll(@RequestParam(required = false) String firstName) {
-        List<EntityModel<Employee>> employees = employeeRepository.findAll().stream()
+        List<EntityModel<Employee>> employees = employeeJpaRepository.findAll().stream()
                 // should be moved to service / repository
                 .filter(employee -> {
                     if (firstName != null)
@@ -48,11 +59,25 @@ public class EmployeeController {
         return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).getAll(firstName)).withSelfRel());
     }
 
+    @GetMapping("/dto")
+    public ResponseEntity<List<EmployeeDto>> getAllDto(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String company,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        List<EmployeeDto> employees = employeeService.findEmployee(firstName, lastName, company, from, to)
+                .stream()
+                .map(emp -> modelMapper.map(emp, EmployeeDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(employees);
+    }
+
     // TODO: implement pagination
     @GetMapping("/pageable")
     public CollectionModel<EntityModel<Employee>> getAllSearch(Pageable pageable) {
 
-        List<EntityModel<Employee>> employees = employeeRepository.findAll(pageable).stream()
+        List<EntityModel<Employee>> employees = employeeJpaRepository.findAll(pageable).stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).getAllSearch(pageable)).withSelfRel());
@@ -61,18 +86,18 @@ public class EmployeeController {
     @GetMapping("{id}")
     @GetEmployeeAspect
     public EntityModel<Employee> getEmployeeById(@PathVariable Long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        Employee employee = employeeJpaRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
         return assembler.toModel(employee);
     }
 
 
     @PostMapping
     public ResponseEntity<EntityModel<Employee>> saveEmployee(@RequestBody Employee employee) {
-        employeeRepository.findById(employee.getId()).ifPresent(emp -> {
+        employeeJpaRepository.findById(employee.getId()).ifPresent(emp -> {
             // maybe link should be added to error message
             throw new EmployeeAlreadyExistException(emp.getId());
         });
-        EntityModel<Employee> employeeEntityModel = assembler.toModel(employeeRepository.save(employee));
+        EntityModel<Employee> employeeEntityModel = assembler.toModel(employeeJpaRepository.save(employee));
         return ResponseEntity.created(employeeEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(employeeEntityModel);
     }
@@ -80,17 +105,17 @@ public class EmployeeController {
     @PutMapping("{id}")
     public ResponseEntity<?> putEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         // should be moved to service
-        Employee updatedEmployee = employeeRepository.findById(id).
+        Employee updatedEmployee = employeeJpaRepository.findById(id).
                 map(emp -> {
                     emp.setFirstName(employee.getFirstName());
                     emp.setLastName(employee.getLastName());
-                    emp.setBirthday(employee.getBirthday());
+                    emp.setBirthDate(employee.getBirthDate());
                     emp.setCompany(employee.getCompany());
                     emp.setSalary(employee.getSalary());
-                    return employeeRepository.save(emp);
+                    return employeeJpaRepository.save(emp);
                 }).orElseGet(() -> {
                     employee.setId(id);
-                    return employeeRepository.save(employee);
+                    return employeeJpaRepository.save(employee);
                 });
         EntityModel<Employee> employeeEntityModel = assembler.toModel(updatedEmployee);
         return ResponseEntity.ok(employeeEntityModel);
@@ -98,9 +123,9 @@ public class EmployeeController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
-        employeeRepository.findById(id).orElseThrow(() ->
+        employeeJpaRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find employee with id: " + id));
-        employeeRepository.deleteById(id);
+        employeeJpaRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

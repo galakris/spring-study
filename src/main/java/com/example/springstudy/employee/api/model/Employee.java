@@ -1,25 +1,30 @@
 package com.example.springstudy.employee.api.model;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Entity
 public class Employee {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
-    private LocalDate birthday;
+    private LocalDate birthDate;
     private BigDecimal salary;
+    @ManyToOne
     private Company company;
 
     public Employee() {
     }
 
-    public Employee(Long id, String firstName, String lastName, LocalDate birthday, BigDecimal salary, Company company) {
+    public Employee(Long id, String firstName, String lastName, LocalDate birthDate, BigDecimal salary, Company company) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.birthday = birthday;
+        this.birthDate = birthDate;
         this.salary = salary;
         this.company = company;
     }
@@ -48,12 +53,12 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public LocalDate getBirthday() {
-        return birthday;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public BigDecimal getSalary() {
@@ -72,12 +77,13 @@ public class Employee {
         this.company = company;
     }
 
+
     @Override
     public String toString() {
         return "Employee{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", birthday=" + birthday +
+                ", birthday=" + birthDate +
                 ", salary=" + salary +
                 ", company=" + company +
                 '}';

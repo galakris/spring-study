@@ -10,6 +10,8 @@ public class EmployeeSpecifications {
     private EmployeeSpecifications() {
     }
 
+    // TODO: specification for companyName
+
     public static Specification<Employee> hasFirstName(String firstName) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
     }
@@ -19,13 +21,10 @@ public class EmployeeSpecifications {
     }
 
     public static Specification<Employee> bornAfter(LocalDate date) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get("birthday"), date);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get("birthDate"), date);
     }
 
     public static Specification<Employee> bornBefore(LocalDate date) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("birthday"), date);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("birthDate"), date);
     }
-
-
-
 }
