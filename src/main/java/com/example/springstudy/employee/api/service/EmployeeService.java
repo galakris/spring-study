@@ -3,11 +3,12 @@ package com.example.springstudy.employee.api.service;
 import com.example.springstudy.employee.api.model.Employee;
 import com.example.springstudy.employee.api.repository.impl.EmployeeJpaRepository;
 import com.example.springstudy.employee.api.service.spec.EmployeeSpecifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class EmployeeService {
@@ -18,7 +19,7 @@ public class EmployeeService {
         this.employeeJpaRepository = employeeJpaRepository;
     }
 
-    public List<Employee> findEmployee(String firstName, String lastName, String companyName, LocalDate from, LocalDate to) {
+    public Page<Employee> findEmployee(String firstName, String lastName, String company, LocalDate from, LocalDate to, Pageable pageable) {
         Specification<Employee> employeeSpecification = Specification.where((root, query, criteriaBuilder) -> null);
 
         if (firstName != null)
@@ -30,6 +31,6 @@ public class EmployeeService {
         if (to != null)
             employeeSpecification = employeeSpecification.and(EmployeeSpecifications.bornBefore(to));
         // TODO: specification for companyName
-        return employeeJpaRepository.findAll(employeeSpecification);
+        return employeeJpaRepository.findAll(employeeSpecification, pageable);
     }
 }

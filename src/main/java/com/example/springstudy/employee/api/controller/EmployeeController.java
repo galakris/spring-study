@@ -10,6 +10,8 @@ import com.example.springstudy.employee.api.repository.impl.EmployeeJpaRepositor
 import com.example.springstudy.employee.api.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -65,8 +67,9 @@ public class EmployeeController {
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String company,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        List<EmployeeDto> employees = employeeService.findEmployee(firstName, lastName, company, from, to)
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @SortDefault("id") @PageableDefault(5) Pageable pageable) {
+        List<EmployeeDto> employees = employeeService.findEmployee(firstName, lastName, company, from, to, pageable)
                 .stream()
                 .map(emp -> modelMapper.map(emp, EmployeeDto.class))
                 .collect(Collectors.toList());
